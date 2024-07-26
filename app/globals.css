@@ -83,14 +83,13 @@ body {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 5px;
+  width: 3px;
   height: 3px;
   border-radius: 2px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 50px;
+  background: #ffffff;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -98,8 +97,8 @@ body {
   border-radius: 50px;
 }
 
-.scrollbar-hidden::-webkit-scrollbar {
-  display: none;
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* Markdown Start */
