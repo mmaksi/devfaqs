@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React from 'react';
 import Theme from './Theme';
 import MobileNav from './MobileNav';
+import GlobalSearch from '../search/Search';
 
 const UserSettings = () => {
   return (
@@ -48,6 +49,8 @@ const Navbar = () => {
           <span className='text-primary-500'>FAQs</span>
         </p>
       </Link>
+
+      <GlobalSearch />
 
       <div className='flex-between gap-5'>
         <Theme />

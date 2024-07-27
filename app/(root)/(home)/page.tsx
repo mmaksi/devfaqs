@@ -1,6 +1,5 @@
 'use client';
 
-import { UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 
 const Home = () => {
@@ -20,7 +19,6 @@ const Home = () => {
           </button>
         </Link>
       </div>
-      <UserButton />
     </div>
   );
 };
