@@ -4,8 +4,10 @@ import Question from '@/database/question.model';
 import { connectToDB } from '../mongoose';
 import Tag from '@/database/tag.model';
 import { revalidatePath } from 'next/cache';
+import { CreateQuestionParams, GetQuestionsParams } from './types';
+// import User from '@/database/user.model';
 
-export async function createQuestion(params: any) {
+export async function createQuestion(params: CreateQuestionParams) {
   try {
     await connectToDB();
     const { title, content, tags, author, path } = params;
@@ -30,17 +32,33 @@ export async function createQuestion(params: any) {
       );
 
       tagDocuments.push(existingTag._id);
-
-      await Question.findByIdAndUpdate(question._id, {
-        $push: { tags: { $each: tagDocuments } },
-      });
-
-      // Create an interaction record for the user's ask_question action
-
-      // Increment author's reputation by +5 for creating a question
-
-      revalidatePath(path);
     }
+
+    await Question.findByIdAndUpdate(question._id, {
+      $push: { tags: { $each: tagDocuments } },
+    });
+
+    revalidatePath(path);
   } catch (error) {}
 }
-// N52xcZ40xgKAGPYL
+
+// create a getQuestions function to get all the questions from the database using the Question model
+export async function getQuestions(params: GetQuestionsParams) {
+  try {
+    await connectToDB();
+    const questions = await Question.find()
+      .populate({
+        path: 'tags',
+        model: 'Tag',
+      })
+      .populate({
+        path: 'author',
+        model: 'User',
+      })
+      .sort({ createdAt: -1 });
+    return questions;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

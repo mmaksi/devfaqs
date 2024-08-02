@@ -26,13 +26,7 @@ const inter = Inter({
 
 const grotsek = spaceGrotesk({
   subsets: ['latin'],
-  weight: [
-    '300',
-    '400',
-    '500',
-    '600',
-    '700',
-  ],
+  weight: ['300', '400', '500', '600', '700'],
   variable: '--font-spaceGrotesk',
 });
 
@@ -49,23 +43,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang='en'>
-      <body
-        className={`${inter.className} ${grotsek.className}`}
-      >
+      <body className={`${inter.variable} ${grotsek.variable}`}>
         <ClerkProvider
           afterSignOutUrl='/'
           appearance={{
             elements: {
-              formButtonPrimary:
-                'primary-gradient',
+              formButtonPrimary: 'primary-gradient',
               footerActionLink:
                 'primary-text-gradient hover:text-primary-500',
             },
           }}
         >
-          <ThemeProvider>
-            {children}
-          </ThemeProvider>
+          <ThemeProvider>{children}</ThemeProvider>
         </ClerkProvider>
       </body>
     </html>

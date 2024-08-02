@@ -21,8 +21,7 @@ import { KeyboardEvent, useRef, useState } from 'react';
 import { Badge } from '../ui/badge';
 import Image from 'next/image';
 import { createQuestion } from '@/lib/actions/question.action';
-import { useRouter } from 'next/navigation';
-// import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 const type: 'create' | 'edit' = 'create';
 
@@ -34,7 +33,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
-  // const pathname = usePathname();
+  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
@@ -53,6 +52,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
         content: values.explanation,
         tags: values.tags,
         author: JSON.parse(mongoUserId),
+        path: pathname,
       });
       router.push('/');
     } catch (error) {
