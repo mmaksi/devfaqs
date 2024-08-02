@@ -16,9 +16,26 @@ import {
 import { Input } from '@/components/ui/input';
 import { QuestionsSchema } from '@/lib/validations';
 import { z } from 'zod';
+import { Editor } from '@tinymce/tinymce-react';
+import { KeyboardEvent, useRef, useState } from 'react';
+import { Badge } from '../ui/badge';
+import Image from 'next/image';
+import { createQuestion } from '@/lib/actions/question.action';
+import { useRouter } from 'next/navigation';
+// import { usePathname } from 'next/navigation';
 
-export function Questions() {
-  // 1. Define your form.
+const type: 'create' | 'edit' = 'create';
+
+interface IMongoUserId {
+  mongoUserId: string;
+}
+
+export function Questions({ mongoUserId }: IMongoUserId) {
+  const editorRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  // const pathname = usePathname();
+
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
@@ -28,11 +45,53 @@ export function Questions() {
     },
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+    setIsSubmitting(true);
+    try {
+      await createQuestion({
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId),
+      });
+      router.push('/');
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function handleKeyDown(
+    e: KeyboardEvent<HTMLInputElement>,
+    field: any
+  ) {
+    if (e.key === 'Enter' && field.name === 'tags') {
+      e.preventDefault();
+      const tagInput = e.target as HTMLInputElement;
+      const tagValue = tagInput.value.trim();
+
+      if (tagValue !== '') {
+        if (tagValue.length > 15) {
+          return form.setError('tags', {
+            type: 'required',
+            message: 'Tag must be less than 15 characters',
+          });
+        }
+
+        if (!field.value.includes(tagValue)) {
+          form.setValue('tags', [...field.value, tagValue]);
+          tagInput.value = '';
+          form.clearErrors('tags');
+        } else {
+          form.trigger();
+        }
+      }
+    }
+  }
+
+  function handleTagRemove(tag: string, field: any) {
+    const newTags = field.value.filter((t: string) => t !== tag);
+    form.setValue('tags', newTags);
   }
 
   return (
@@ -47,7 +106,7 @@ export function Questions() {
           render={({ field }) => (
             <FormItem className='flex w-full flex-col'>
               <FormLabel className='paragraph-semibold text-dark400_light800'>
-                Question Title{' '}
+                Question Title
                 <span className='text-primary-500'>*</span>
               </FormLabel>
               <FormControl className='mt-3.5'>
@@ -76,7 +135,49 @@ export function Questions() {
                 <span className='text-primary-500'>*</span>
               </FormLabel>
               <FormControl className='mt-3.5'>
-                {/* TODO */}
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
+                  onInit={(_evt, editor) =>
+                    // @ts-ignore
+                    (editorRef.current = editor)
+                  }
+                  onBlur={field.onBlur}
+                  onEditorChange={(content) =>
+                    field.onChange(content)
+                  }
+                  initialValue=''
+                  init={{
+                    height: 350,
+                    menubar: false,
+                    plugins: [
+                      'advlist',
+                      'autolink',
+                      'lists',
+                      'link',
+                      'image',
+                      'charmap',
+                      'preview',
+                      'anchor',
+                      'searchreplace',
+                      'visualblocks',
+                      'codesample',
+                      'fullscreen',
+                      'insertdatetime',
+                      'media',
+                      'table',
+                      'code',
+                      'help',
+                      'wordcount',
+                    ],
+                    toolbar:
+                      'undo redo | blocks | ' +
+                      'codesample | bold italic forecolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent | ' +
+                      'removeformat | help',
+                    content_style:
+                      'body { font-family:Inter; font-size:16px }',
+                  }}
+                />
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
                 Introduce the problem and expand on what you put in
@@ -97,12 +198,38 @@ export function Questions() {
                 <span className='text-primary-500'>*</span>
               </FormLabel>
               <FormControl className='mt-3.5'>
-                <Input
-                  className='no-focus paragraph-regular background-light900_dark300 
+                <>
+                  <Input
+                    className='no-focus paragraph-regular background-light900_dark300 
                   light-border-2 text-dark300_light700 min-h-[56px] border'
-                  {...field}
-                  placeholder='Add tags...'
-                />
+                    onKeyDown={(e) => handleKeyDown(e, field)}
+                    placeholder='Add tags...'
+                  />
+                  {field.value.length > 0 && (
+                    <div className='flex-start mt-2.5 gap-2.5'>
+                      {field.value.map((tag: any) => (
+                        <Badge
+                          key={tag}
+                          className='subtle-medium background-light800_dark300
+                          text-light400_light500 flex items-center justify-center
+                          gap-2 rounded-md border-none p-2 px-4 capitalize'
+                        >
+                          {tag}
+                          <Image
+                            src='/assets/icons/close.svg'
+                            alt='Close icon'
+                            width={12}
+                            height={12}
+                            className='cursor-pointer object-contain invert-0 dark:invert'
+                            onClick={() =>
+                              handleTagRemove(tag, field)
+                            }
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </>
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
                 Add up to 3 tags to describe what your question is
@@ -112,7 +239,22 @@ export function Questions() {
             </FormItem>
           )}
         />
-        <Button type='submit'>Submit</Button>
+
+        <Button
+          type='submit'
+          className='primary-gradient w-fit !text-light-900'
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>{type === 'edit' ? 'Editing...' : 'Posting...'}</>
+          ) : (
+            <>
+              {type === 'edit'
+                ? 'Editing Question'
+                : 'Ask a question'}
+            </>
+          )}
+        </Button>
       </form>
     </Form>
   );
