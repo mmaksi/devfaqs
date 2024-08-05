@@ -5,7 +5,7 @@ import { connectToDB } from '../mongoose';
 import Tag from '@/database/tag.model';
 import { revalidatePath } from 'next/cache';
 import { CreateQuestionParams, GetQuestionsParams } from './types';
-// import User from '@/database/user.model';
+import User from '@/database/user.model';
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
@@ -49,11 +49,11 @@ export async function getQuestions(params: GetQuestionsParams) {
     const questions = await Question.find()
       .populate({
         path: 'tags',
-        model: 'Tag',
+        model: Tag,
       })
       .populate({
         path: 'author',
-        model: 'User',
+        model: User,
       })
       .sort({ createdAt: -1 });
     return questions;
