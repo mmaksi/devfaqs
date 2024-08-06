@@ -38,7 +38,7 @@ const Navbar = () => {
           src='/assets/images/site-logo.svg'
           width={23}
           height={23}
-          alt='TechFAQs'
+          alt='Logo'
         />
         <p
           className='h2-bold font-spaceGrotesk 

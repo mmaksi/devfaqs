@@ -29,7 +29,7 @@ export async function getTopInteractedTags(
       { _id: '3', name: 'tag3' },
     ];
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
@@ -82,7 +82,7 @@ export async function getAllTags(params: GetAllTagsParams) {
 
     return { tags, isNext };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
