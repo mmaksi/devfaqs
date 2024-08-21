@@ -9,13 +9,22 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '../ui/badge';
 
 import { createQuestion } from '@/lib/actions/question.action';
 import { QuestionsSchema } from '@/lib/validations';
+import { useTheme } from '@/context/ThemeProvider';
 
 const type: 'create' | 'edit' = 'create';
 
@@ -24,6 +33,8 @@ interface IMongoUserId {
 }
 
 export function Questions({ mongoUserId }: IMongoUserId) {
+  const { mode } = useTheme();
+  console.log(mode);
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -43,7 +54,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
     try {
       await createQuestion({
         title: values.title,
-        content: values.explanation,
+        content: values.explanation || '',
         tags: values.tags,
         author: JSON.parse(mongoUserId),
         path: pathname,
@@ -87,7 +98,10 @@ export function Questions({ mongoUserId }: IMongoUserId) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className='flex w-full flex-col gap-10'>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className='flex w-full flex-col gap-10'
+      >
         <FormField
           control={form.control}
           name='title'
@@ -119,10 +133,11 @@ export function Questions({ mongoUserId }: IMongoUserId) {
             <FormItem className='flex w-full flex-col gap-3'>
               <FormLabel className='paragraph-semibold text-dark400_light800'>
                 Detailed explanation of your problem
-                <span className='text-primary-500'>*</span>
+                {/* <span className='text-primary-500'>*</span> */}
               </FormLabel>
               <FormControl className='mt-3.5'>
                 <Editor
+                  key={mode}
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(_evt, editor) =>
                     // @ts-ignore
@@ -160,11 +175,14 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                       'alignright alignjustify | bullist numlist outdent indent | ' +
                       'removeformat | help',
                     content_style: 'body { font-family:Inter; font-size:16px }',
+                    skin: mode === 'dark' ? 'oxide-dark' : 'oxide',
+                    content_css: mode === 'dark' ? 'dark' : 'light',
                   }}
                 />
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
-                Introduce the problem and expand on what you put in the title. Minimum 20 characters.
+                Introduce the problem and expand on what you put in the title. Minimum 20
+                characters.
               </FormDescription>
               <FormMessage className='text-red-500' />
             </FormItem>
@@ -213,14 +231,19 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                 </>
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
-                Add up to 3 tags to describe what your question is about. Press Enter to add a tag.
+                Add up to 3 tags to describe what your question is about. Press Enter to
+                add a tag.
               </FormDescription>
               <FormMessage className='text-red-500' />
             </FormItem>
           )}
         />
 
-        <Button type='submit' className='primary-gradient w-fit !text-light-900' disabled={isSubmitting}>
+        <Button
+          type='submit'
+          className='primary-gradient w-fit !text-light-900'
+          disabled={isSubmitting}
+        >
           {isSubmitting ? (
             <>{type === 'edit' ? 'Editing...' : 'Posting...'}</>
           ) : (
