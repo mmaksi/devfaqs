@@ -1,26 +1,13 @@
 import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
-import {
-  Inter,
-  Space_Grotesk as spaceGrotesk,
-} from 'next/font/google';
+import { Inter, Space_Grotesk as spaceGrotesk } from 'next/font/google';
 import React from 'react';
 import './globals.css';
 import { ThemeProvider } from '@/context/ThemeProvider';
 
 const inter = Inter({
   subsets: ['latin'],
-  weight: [
-    '100',
-    '200',
-    '300',
-    '400',
-    '500',
-    '600',
-    '700',
-    '800',
-    '900',
-  ],
+  weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
   variable: '--font-inter',
 });
 
@@ -49,8 +36,7 @@ export default function RootLayout({
           appearance={{
             elements: {
               formButtonPrimary: 'primary-gradient',
-              footerActionLink:
-                'primary-text-gradient hover:text-primary-500',
+              footerActionLink: 'primary-text-gradient hover:text-primary-500',
             },
           }}
         >

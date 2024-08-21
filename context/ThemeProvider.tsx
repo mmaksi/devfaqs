@@ -1,43 +1,20 @@
 'use client';
 
-import React, {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
-
-// Define the theme types
-export type Mode = 'light' | 'dark' | 'system';
-
-// Define the theme context
-interface ThemeContextType {
-  mode: Mode;
-  setMode: Dispatch<SetStateAction<Mode>>;
-}
+import { Mode, ThemeContextType, ThemeProviderProps } from '@/types/theme-context';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const ThemeContext = createContext<ThemeContextType>({
   mode: 'light',
   setMode: () => {},
 });
 
-// Define the theme provider
-interface ThemeProviderProps {
-  children: React.ReactNode;
-}
-
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-  children,
-}) => {
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [mode, setMode] = useState<Mode>('light');
 
   const toggleThemeMode = () => {
     if (
       localStorage.theme === 'dark' ||
-      (!('theme' in localStorage) &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches)
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
     ) {
       setMode('dark');
       document.documentElement.classList.add('dark');
@@ -51,11 +28,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     toggleThemeMode();
   }, [mode]);
 
-  return (
-    <ThemeContext.Provider value={{ mode, setMode }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  return <ThemeContext.Provider value={{ mode, setMode }}>{children}</ThemeContext.Provider>;
 };
 
 export function useTheme() {

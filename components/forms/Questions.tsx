@@ -1,27 +1,21 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { QuestionsSchema } from '@/lib/validations';
-import { z } from 'zod';
-import { Editor } from '@tinymce/tinymce-react';
-import { KeyboardEvent, useRef, useState } from 'react';
-import { Badge } from '../ui/badge';
-import Image from 'next/image';
-import { createQuestion } from '@/lib/actions/question.action';
 import { usePathname, useRouter } from 'next/navigation';
+import { KeyboardEvent, useRef, useState } from 'react';
+import Image from 'next/image';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Editor } from '@tinymce/tinymce-react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '../ui/badge';
+
+import { createQuestion } from '@/lib/actions/question.action';
+import { QuestionsSchema } from '@/lib/validations';
 
 const type: 'create' | 'edit' = 'create';
 
@@ -61,10 +55,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
     }
   }
 
-  function handleKeyDown(
-    e: KeyboardEvent<HTMLInputElement>,
-    field: any
-  ) {
+  function handleKeyDown(e: KeyboardEvent<HTMLInputElement>, field: any) {
     if (e.key === 'Enter' && field.name === 'tags') {
       e.preventDefault();
       const tagInput = e.target as HTMLInputElement;
@@ -96,10 +87,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className='flex w-full flex-col gap-10'
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className='flex w-full flex-col gap-10'>
         <FormField
           control={form.control}
           name='title'
@@ -117,8 +105,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                 />
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
-                Be specific and imagine you are asking a question to
-                another developer
+                Be specific and imagine you are asking a question to another developer
               </FormDescription>
               <FormMessage className='text-red-500' />
             </FormItem>
@@ -142,9 +129,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                     (editorRef.current = editor)
                   }
                   onBlur={field.onBlur}
-                  onEditorChange={(content) =>
-                    field.onChange(content)
-                  }
+                  onEditorChange={(content) => field.onChange(content)}
                   initialValue=''
                   init={{
                     height: 350,
@@ -174,14 +159,12 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                       'codesample | bold italic forecolor | alignleft aligncenter ' +
                       'alignright alignjustify | bullist numlist outdent indent | ' +
                       'removeformat | help',
-                    content_style:
-                      'body { font-family:Inter; font-size:16px }',
+                    content_style: 'body { font-family:Inter; font-size:16px }',
                   }}
                 />
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
-                Introduce the problem and expand on what you put in
-                the title. Minimum 20 characters.
+                Introduce the problem and expand on what you put in the title. Minimum 20 characters.
               </FormDescription>
               <FormMessage className='text-red-500' />
             </FormItem>
@@ -221,9 +204,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                             width={12}
                             height={12}
                             className='cursor-pointer object-contain invert-0 dark:invert'
-                            onClick={() =>
-                              handleTagRemove(tag, field)
-                            }
+                            onClick={() => handleTagRemove(tag, field)}
                           />
                         </Badge>
                       ))}
@@ -232,27 +213,18 @@ export function Questions({ mongoUserId }: IMongoUserId) {
                 </>
               </FormControl>
               <FormDescription className='body-regular mt-2.5 text-light-500'>
-                Add up to 3 tags to describe what your question is
-                about. Press Enter to add a tag.
+                Add up to 3 tags to describe what your question is about. Press Enter to add a tag.
               </FormDescription>
               <FormMessage className='text-red-500' />
             </FormItem>
           )}
         />
 
-        <Button
-          type='submit'
-          className='primary-gradient w-fit !text-light-900'
-          disabled={isSubmitting}
-        >
+        <Button type='submit' className='primary-gradient w-fit !text-light-900' disabled={isSubmitting}>
           {isSubmitting ? (
             <>{type === 'edit' ? 'Editing...' : 'Posting...'}</>
           ) : (
-            <>
-              {type === 'edit'
-                ? 'Editing Question'
-                : 'Ask a question'}
-            </>
+            <>{type === 'edit' ? 'Editing Question' : 'Ask a question'}</>
           )}
         </Button>
       </form>

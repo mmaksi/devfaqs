@@ -14,37 +14,37 @@ export const sidebarLinks: SidebarLink[] = [
   {
     imgURL: '/assets/icons/home.svg',
     route: '/',
-    label: 'Home page icon',
+    label: 'Home',
   },
   {
     imgURL: '/assets/icons/users.svg',
     route: '/community',
-    label: 'Community page icon',
+    label: 'Community',
   },
   {
     imgURL: '/assets/icons/star.svg',
     route: '/collection',
-    label: 'Collections page icon',
+    label: 'Collections',
   },
   {
     imgURL: '/assets/icons/suitcase.svg',
     route: '/jobs',
-    label: 'Find Jobs page icon',
+    label: 'Find Jobs',
   },
   {
     imgURL: '/assets/icons/tag.svg',
     route: '/tags',
-    label: 'Tags page icon',
+    label: 'Tags',
   },
   {
     imgURL: '/assets/icons/user.svg',
     route: '/profile',
-    label: 'Profile page icon',
+    label: 'Profile',
   },
   {
     imgURL: '/assets/icons/question.svg',
     route: '/ask-question',
-    label: 'Ask a question page icon',
+    label: 'Ask a question',
   },
 ];
 
