@@ -12,7 +12,7 @@ interface CustomInputProps {
   otherClasses: string;
 }
 
-const LocalSearchbar = ({
+const LocalSearch = ({
   route,
   iconPosition,
   imgSrc,
@@ -44,4 +44,4 @@ const LocalSearchbar = ({
   );
 };
 
-export default LocalSearchbar;
+export default LocalSearch;
