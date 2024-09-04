@@ -50,8 +50,8 @@ export default async function Page({
           <div className='flex justify-end max-sm:justify-start'>
             <Votes
               type='Question'
-              itemId={JSON.stringify(result._id)}
-              userId={JSON.stringify(mongoUser._id)}
+              itemId={result._id.toString()}
+              userId={mongoUser._id.toString()}
               upvotes={result.upvotes.length}
               hasupVoted={result.upvotes.includes(mongoUser._id)}
               downvotes={result.downvotes.length}
@@ -101,14 +101,14 @@ export default async function Page({
 
         <AllAnswers
           questionId={result._id}
-          userId={mongoUser._id}
+          userId={mongoUser._id.toString()}
           totalAnswers={result.answers.length}
         />
 
         <Answer
           question={result.content}
-          questionId={JSON.stringify(result._id)}
-          authorId={JSON.stringify(mongoUser._id)}
+          questionId={result._id.toString()}
+          authorId={mongoUser._id.toString()}
         />
       </div>
     </>

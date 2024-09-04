@@ -34,7 +34,6 @@ interface IMongoUserId {
 
 export function Questions({ mongoUserId }: IMongoUserId) {
   const { mode } = useTheme();
-  console.log(mode);
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -56,7 +55,7 @@ export function Questions({ mongoUserId }: IMongoUserId) {
         title: values.title,
         content: values.explanation || '',
         tags: values.tags,
-        author: JSON.parse(mongoUserId),
+        author: mongoUserId,
         path: pathname,
       });
       router.push('/');

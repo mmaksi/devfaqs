@@ -122,7 +122,7 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
     }
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
@@ -192,7 +192,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
 
     return { questions: savedQuestions, isNext };
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }

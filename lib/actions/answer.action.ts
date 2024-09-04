@@ -58,7 +58,6 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
       new: true,
     });
-    console.log(userId);
 
     if (!answer) {
       throw new Error('Answer not found');
@@ -78,7 +77,7 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
@@ -88,7 +87,6 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     connectToDB();
 
     const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
-    console.log(userId);
 
     let updateQuery = {};
 
@@ -121,7 +119,7 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }

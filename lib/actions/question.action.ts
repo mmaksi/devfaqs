@@ -92,8 +92,6 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
     connectToDB();
 
     const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
-    console.log(userId);
-
     let updateQuery = {};
 
     if (hasupVoted) {
@@ -127,7 +125,7 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }
@@ -137,8 +135,6 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     connectToDB();
 
     const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
-    console.log(userId);
-
     let updateQuery = {};
 
     if (hasdownVoted) {
@@ -170,7 +166,7 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error(error);
     throw error;
   }
 }

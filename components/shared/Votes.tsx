@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 import { downvoteQuestion, upvoteQuestion } from '@/lib/actions/question.action';
@@ -9,6 +9,8 @@ import { formatNumber } from '@/lib/utils';
 
 import { toast } from '../ui/use-toast';
 import { toggleSaveQuestion } from '@/lib/actions/user.action';
+import { useEffect } from 'react';
+import { viewQuestion } from '@/lib/actions/interaction.action';
 
 interface Props {
   type: string;
@@ -32,11 +34,18 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
+  const router = useRouter();
 
+  useEffect(() => {
+    viewQuestion({
+      questionId: itemId,
+      userId: userId || null,
+    });
+  }, [itemId, userId, pathname, router]);
   const handleSave = async () => {
     await toggleSaveQuestion({
-      userId: JSON.parse(userId),
-      questionId: JSON.parse(itemId),
+      userId,
+      questionId: itemId,
       path: pathname,
     });
 
@@ -57,15 +66,15 @@ const Votes = ({
     if (action === 'upvote') {
       if (type === 'Question') {
         await upvoteQuestion({
-          questionId: JSON.parse(itemId),
-          userId: JSON.parse(userId),
+          questionId: itemId,
+          userId,
           hasupVoted,
           hasdownVoted,
           path: pathname,
         });
       } else if (type === 'Answer') {
         await upvoteAnswer({
-          answerId: JSON.parse(itemId),
+          answerId: itemId,
           userId,
           hasupVoted,
           hasdownVoted,
@@ -79,15 +88,15 @@ const Votes = ({
     if (action === 'downvote') {
       if (type === 'Question') {
         await downvoteQuestion({
-          questionId: JSON.parse(itemId),
-          userId: JSON.parse(userId),
+          questionId: itemId,
+          userId,
           hasupVoted,
           hasdownVoted,
           path: pathname,
         });
       } else if (type === 'Answer') {
         await downvoteAnswer({
-          answerId: JSON.parse(itemId),
+          answerId: itemId,
           userId,
           hasupVoted,
           hasdownVoted,
