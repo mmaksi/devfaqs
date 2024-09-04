@@ -19,8 +19,7 @@ const LeftSidebar = () => {
       <div className='flex flex-1 flex-col gap-6'>
         {sidebarLinks.map((link) => {
           const isActive =
-            (pathname.includes(link.route) &&
-              link.route.length > 1) ||
+            (pathname.includes(link.route) && link.route.length > 1) ||
             pathname === link.route;
 
           if (link.route === '/profile') {
@@ -48,11 +47,7 @@ const LeftSidebar = () => {
                 height={20}
                 className={`${isActive ? '' : 'invert-colors'}`}
               />
-              <p
-                className={`${
-                  isActive ? 'base-bold' : 'base-medium'
-                } max-lg:hidden`}
-              >
+              <p className={`${isActive ? 'base-bold' : 'base-medium'} max-lg:hidden`}>
                 {link.label}
               </p>
             </Link>
@@ -71,9 +66,7 @@ const LeftSidebar = () => {
                 height={20}
                 className='invert-colors lg:hidden'
               />
-              <span className='primary-text-gradient max-lg:hidden'>
-                Log In
-              </span>
+              <span className='primary-text-gradient max-lg:hidden'>Log In</span>
             </Button>
           </Link>
 

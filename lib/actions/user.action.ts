@@ -7,6 +7,8 @@ import {
   DeleteUserParams,
   GetAllUsersParams,
   GetSavedQuestionsParams,
+  GetUserByIdParams,
+  GetUserStatsParams,
   ToggleSaveQuestionParams,
   UpdateUserParams,
 } from './types';
@@ -14,6 +16,7 @@ import { revalidatePath } from 'next/cache';
 import Question from '@/database/question.model';
 import Tag from '@/database/tag.model';
 import { FilterQuery } from 'mongoose';
+import Answer from '@/database/answer.model';
 
 export async function getUserById(params: any) {
   try {
@@ -57,6 +60,8 @@ export async function updateUser(params: UpdateUserParams) {
   try {
     connectToDB();
     const { clerkId, updateData, path } = params;
+    console.log('updateData');
+    console.log(updateData);
     await User.findOneAndUpdate({ clerkId }, updateData, {
       new: true,
     });
@@ -193,6 +198,90 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     return { questions: savedQuestions, isNext };
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+}
+
+export async function getUserInfo(params: GetUserByIdParams) {
+  try {
+    connectToDB();
+
+    const { userId } = params;
+
+    const user = await User.findOne({ clerkId: userId });
+
+    console.log({ user });
+    if (!user) {
+      console.log(user);
+      throw new Error('User not found');
+    }
+
+    const totalQuestions = await Question.countDocuments({ author: user._id });
+    const totalAnswers = await Answer.countDocuments({
+      author: user._id,
+    });
+
+    return { user, totalQuestions, totalAnswers };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    connectToDB();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({
+        upvotes: -1,
+      })
+      .populate('question', '_id title')
+      .populate('author', '_id clerkId name picture')
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const isNext = totalAnswers > skipAmount + userAnswers.length;
+
+    return { totalAnswers, answers: userAnswers, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function getUserQuestions(params: GetUserStatsParams) {
+  try {
+    connectToDB();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    const totalQuestions = await Question.countDocuments({ author: userId });
+
+    const userQuestions = await Question.find({ author: userId })
+      .sort({
+        createdAt: -1,
+        views: -1,
+        upvotes: -1,
+      })
+      .populate('tags', '_id name')
+      .populate('author', '_id clerkId name picture')
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const isNext = totalQuestions > skipAmount + userQuestions.length;
+
+    return { totalQuestions, questions: userQuestions, isNext };
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 }
